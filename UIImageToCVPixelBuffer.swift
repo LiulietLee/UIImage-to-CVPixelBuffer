@@ -6,21 +6,22 @@
 //  Copyright © 2017 Brian Advent. All rights reserved.
 //
 
-import CoreVideo
+import UIKit
 
-struct ImageProcessor {
-    static func pixelBuffer (forImage image:CGImage) -> CVPixelBuffer? {
-        
+extension UIImage {
+    
+    func toPixelBuffer() -> CVPixelBuffer? {
+        guard let image = self.cgImage else { return nil }
         
         let frameSize = CGSize(width: image.width, height: image.height)
         
-        var pixelBuffer:CVPixelBuffer? = nil
-        let status = CVPixelBufferCreate(kCFAllocatorDefault, Int(frameSize.width), Int(frameSize.height), kCVPixelFormatType_32BGRA , nil, &pixelBuffer)
+        var pixelBuffer: CVPixelBuffer? = nil
+        let status = CVPixelBufferCreate(kCFAllocatorDefault,
+                                         Int(frameSize.width),
+                                         Int(frameSize.height),
+                                         kCVPixelFormatType_32BGRA , nil, &pixelBuffer)
         
-        if status != kCVReturnSuccess {
-            return nil
-            
-        }
+        if status != kCVReturnSuccess { return nil }
         
         CVPixelBufferLockBaseAddress(pixelBuffer!, CVPixelBufferLockFlags.init(rawValue: 0))
         let data = CVPixelBufferGetBaseAddress(pixelBuffer!)
@@ -34,7 +35,6 @@ struct ImageProcessor {
         CVPixelBufferUnlockBaseAddress(pixelBuffer!, CVPixelBufferLockFlags(rawValue: 0))
         
         return pixelBuffer
-        
     }
     
 }
